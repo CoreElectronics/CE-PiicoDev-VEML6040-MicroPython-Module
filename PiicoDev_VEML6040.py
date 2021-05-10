@@ -1,4 +1,8 @@
 # A simple class to read data from the VEML6040 i2c light sensor
+# Outputs:
+#  - raw values for Red, Green, Blue and White
+#  - Ambient light, based on the green value
+#  - Correlated colour temperature (CCT)
 
 # This module has been tested with the following development boards:
 #    • BBC Micro:bit
@@ -40,22 +44,36 @@ class PiicoDev_VEML6040(object):
         self.i2c.UnifiedWrite(self.addr, _REG_RED, stop=False)  # write address and repeat condition
         sleep_ms(_INTEGRATION_TIME)
         raw_data = (self.i2c.UnifiedRead(self.addr, 2))         # returns a bytes object     
-        data_red_int = int.from_bytes(raw_data, 'little') * _G_SENSITIVITY
+        data_red_int = int.from_bytes(raw_data, 'little')
         
         self.i2c.UnifiedWrite(self.addr, _REG_GREEN, stop=False)# write address and repeat condition
         sleep_ms(_INTEGRATION_TIME)
         raw_data = (self.i2c.UnifiedRead(self.addr, 2))         # returns a bytes object
-        data_green_int = int.from_bytes(raw_data, 'little') * _G_SENSITIVITY
+        data_green_int = int.from_bytes(raw_data, 'little')
         
         self.i2c.UnifiedWrite(self.addr, _REG_BLUE, stop=False) # write address and repeat condition
         sleep_ms(_INTEGRATION_TIME)
         raw_data = (self.i2c.UnifiedRead(self.addr, 2))         # returns a bytes object
-        data_blue_int = int.from_bytes(raw_data, 'little') * _G_SENSITIVITY
+        data_blue_int = int.from_bytes(raw_data, 'little')
         
         self.i2c.UnifiedWrite(self.addr, _REG_WHITE, stop=True) # write address and repeat condition
         sleep_ms(_INTEGRATION_TIME)
         raw_data = (self.i2c.UnifiedRead(self.addr, 2))         # returns a bytes object
-        data_white_int = int.from_bytes(raw_data, 'little') * _G_SENSITIVITY
+        data_white_int = int.from_bytes(raw_data, 'little')
         
-        return data_red_int, data_green_int, data_blue_int, data_white_int
+        # Generate the XYZ matrix based on https://www.vishay.com/docs/84331/designingveml6040.pdf
+        colour_X = (-0.023249 * data_red_int) + (0.291014 * data_green_int) + (-0.364880 * data_blue_int)
+        colour_Y = (-0.042799 * data_red_int) + (0.272148 * data_green_int) + (-0.279591 * data_blue_int)
+        colour_Z = (-0.155901 * data_red_int) + (0.251534 * data_green_int) + (-0.076240 * data_blue_int)
+        colour_x = colour_X / (colour_X + colour_Y + colour_Z)
+        colour_y = colour_Y / (colour_X + colour_Y + colour_Z)
+        
+        # Use McCamy formula
+        colour_n = (colour_x - 0.3320)/(0.1858 - colour_y)
+        colour_CCT = 449.0 * colour_n ** 3 + 3525.0 * colour_n ** 2 + 6823.3 * colour_n + 5520.33
+        
+        # Calculate ambient light in Lux
+        colour_ALS = data_green_int * _G_SENSITIVITY
+        
+        return data_red_int, data_green_int, data_blue_int, data_white_int, colour_ALS, colour_CCT
           
