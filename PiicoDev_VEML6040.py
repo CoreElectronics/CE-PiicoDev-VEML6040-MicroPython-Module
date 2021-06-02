@@ -34,31 +34,24 @@ class PiicoDev_VEML6040(object):
         self.i2c = i2c_
         self.addr = addr
         try:
-            self.i2c.UnifiedWrite(self.addr, _CONF + _SHUTDOWN)
-            self.i2c.UnifiedWrite(self.addr, _CONF + _DEFAULT_SETTINGS) 
+            self.i2c.write8(self.addr, _CONF, _SHUTDOWN)
+            self.i2c.write8(self.addr, _CONF, _DEFAULT_SETTINGS) 
         except Exception:
             print('Device 0x{:02X} not found'.format(self.addr))
             
-        
+    # Read colours from VEML6040
+    # Returns raw read, green and blue readings, ambient light [Lux] and colour temperature [K]
     def read(self):
-        self.i2c.UnifiedWrite(self.addr, _REG_RED, stop=False)  # write address and repeat condition
-        sleep_ms(_INTEGRATION_TIME)
-        raw_data = (self.i2c.UnifiedRead(self.addr, 2))         # returns a bytes object     
+        raw_data = self.i2c.read16(self.addr, _REG_RED)        # returns a bytes object   
         data_red_int = int.from_bytes(raw_data, 'little')
         
-        self.i2c.UnifiedWrite(self.addr, _REG_GREEN, stop=False)# write address and repeat condition
-        sleep_ms(_INTEGRATION_TIME)
-        raw_data = (self.i2c.UnifiedRead(self.addr, 2))         # returns a bytes object
+        raw_data = (self.i2c.read16(self.addr, _REG_GREEN))    # returns a bytes object
         data_green_int = int.from_bytes(raw_data, 'little')
         
-        self.i2c.UnifiedWrite(self.addr, _REG_BLUE, stop=False) # write address and repeat condition
-        sleep_ms(_INTEGRATION_TIME)
-        raw_data = (self.i2c.UnifiedRead(self.addr, 2))         # returns a bytes object
+        raw_data = (self.i2c.read16(self.addr, _REG_BLUE))     # returns a bytes object
         data_blue_int = int.from_bytes(raw_data, 'little')
         
-        self.i2c.UnifiedWrite(self.addr, _REG_WHITE, stop=True) # write address and repeat condition
-        sleep_ms(_INTEGRATION_TIME)
-        raw_data = (self.i2c.UnifiedRead(self.addr, 2))         # returns a bytes object
+        raw_data = (self.i2c.read16(self.addr, _REG_WHITE))    # returns a bytes object
         data_white_int = int.from_bytes(raw_data, 'little')
         
         # Generate the XYZ matrix based on https://www.vishay.com/docs/84331/designingveml6040.pdf
@@ -76,4 +69,4 @@ class PiicoDev_VEML6040(object):
         colour_ALS = data_green_int * _G_SENSITIVITY
         
         return data_red_int, data_green_int, data_blue_int, data_white_int, colour_ALS, colour_CCT
-          
+
