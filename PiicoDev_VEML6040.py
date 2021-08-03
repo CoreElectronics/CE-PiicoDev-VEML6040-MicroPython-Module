@@ -40,7 +40,7 @@ class PiicoDev_VEML6040(object):
             print('Device 0x{:02X} not found'.format(self.addr))
             
     # Read colours from VEML6040
-    # Returns raw read, green and blue readings, ambient light [Lux] and colour temperature [K]
+    # Returns raw red, green and blue readings, ambient light [Lux] and colour temperature [K]
     def read(self):
         raw_data = self.i2c.read16(self.addr, _REG_RED)        # returns a bytes object   
         data_red_int = int.from_bytes(raw_data, 'little')
