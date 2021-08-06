@@ -12,7 +12,6 @@
 # Written by Peter Johnston at Core Electronics May 2021
 
 from PiicoDev_Unified import *
-i2c = PiicoDev_Unified_I2C()
 from utime import sleep_ms
 
 # Registers
@@ -29,9 +28,16 @@ _SHUTDOWN = b'\x01'         # Disable colour sensor
 _INTEGRATION_TIME = 40      # ms
 _G_SENSITIVITY = 0.25168    # lux/step
     
-class PiicoDev_VEML6040(object):    
-    def __init__(self, addr=_veml6040Address, i2c_=i2c):
-        self.i2c = i2c_
+class PiicoDev_VEML6040(object):
+    def __init__(self, bus=None, freq=None, sda=None, scl=None, addr = _veml6040Address):
+        try:
+            if compat_ind >= 1:
+                pass
+            else:
+                print(compat_str)
+        except:
+            print(compat_str)
+        self.i2c = create_unified_i2c(bus=bus, freq=freq, sda=sda, scl=scl)
         self.addr = addr
         try:
             self.i2c.write8(self.addr, _CONF, _SHUTDOWN)
@@ -42,24 +48,32 @@ class PiicoDev_VEML6040(object):
     # Read colours from VEML6040
     # Returns raw red, green and blue readings, ambient light [Lux] and colour temperature [K]
     def read(self):
-        raw_data = self.i2c.read16(self.addr, _REG_RED)        # returns a bytes object   
-        data_red_int = int.from_bytes(raw_data, 'little')
-        
-        raw_data = (self.i2c.read16(self.addr, _REG_GREEN))    # returns a bytes object
-        data_green_int = int.from_bytes(raw_data, 'little')
-        
-        raw_data = (self.i2c.read16(self.addr, _REG_BLUE))     # returns a bytes object
-        data_blue_int = int.from_bytes(raw_data, 'little')
-        
-        raw_data = (self.i2c.read16(self.addr, _REG_WHITE))    # returns a bytes object
-        data_white_int = int.from_bytes(raw_data, 'little')
+        try:
+            raw_data = self.i2c.read16(self.addr, _REG_RED)        # returns a bytes object   
+            data_red_int = int.from_bytes(raw_data, 'little')
+            
+            raw_data = (self.i2c.read16(self.addr, _REG_GREEN))    # returns a bytes object
+            data_green_int = int.from_bytes(raw_data, 'little')
+            
+            raw_data = (self.i2c.read16(self.addr, _REG_BLUE))     # returns a bytes object
+            data_blue_int = int.from_bytes(raw_data, 'little')
+            
+            raw_data = (self.i2c.read16(self.addr, _REG_WHITE))    # returns a bytes object
+            data_white_int = int.from_bytes(raw_data, 'little')
+        except:
+            print(i2c_err_str.format(self.addr))
+            return float('NaN'), float('NaN'), float('NaN'), float('NaN'), float('NaN'), float('NaN')
         
         # Generate the XYZ matrix based on https://www.vishay.com/docs/84331/designingveml6040.pdf
         colour_X = (-0.023249 * data_red_int) + (0.291014 * data_green_int) + (-0.364880 * data_blue_int)
         colour_Y = (-0.042799 * data_red_int) + (0.272148 * data_green_int) + (-0.279591 * data_blue_int)
         colour_Z = (-0.155901 * data_red_int) + (0.251534 * data_green_int) + (-0.076240 * data_blue_int)
-        colour_x = colour_X / (colour_X + colour_Y + colour_Z)
-        colour_y = colour_Y / (colour_X + colour_Y + colour_Z)
+        colour_total = colour_X + colour_Y + colour_Z
+        if colour_total == 0:
+            return float('NaN'), float('NaN'), float('NaN'), float('NaN'), float('NaN'), float('NaN')
+        else:
+            colour_x = colour_X / colour_total
+            colour_y = colour_Y / colour_total
         
         # Use McCamy formula
         colour_n = (colour_x - 0.3320)/(0.1858 - colour_y)
