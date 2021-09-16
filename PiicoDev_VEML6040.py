@@ -1,15 +1,9 @@
-# A simple class to read data from the VEML6040 i2c light sensor
-# Outputs:
-#  - raw values for Red, Green, Blue and White
-#  - Ambient light, based on the green value
-#  - Correlated colour temperature (CCT)
-
-# This module has been tested with the following development boards:
-#    • BBC Micro:bit
-#    • Raspberry Pi Pico (RP2040)
+# A class to read data from the VEML6040 i2c light sensor
+# Read RGB or HSV data
+# Classify Hue given a dictionary of colour definitions
 
 # No warranties express or implied, including any warranty of merchantability and warranty of fitness for a particular purpose.
-# Written by Peter Johnston at Core Electronics May 2021
+# Written by Peter Johnston and Michael Ruppe at Core Electronics May 2021
 
 from PiicoDev_Unified import *
 from utime import sleep_ms
