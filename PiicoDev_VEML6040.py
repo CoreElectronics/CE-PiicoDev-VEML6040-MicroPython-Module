@@ -57,7 +57,8 @@ class PiicoDev_VEML6040(object):
         self.addr = addr
         try:
             self.i2c.write8(self.addr, _CONF, _SHUTDOWN)
-            self.i2c.write8(self.addr, _CONF, _DEFAULT_SETTINGS) 
+            self.i2c.write8(self.addr, _CONF, _DEFAULT_SETTINGS)
+            sleep_ms(50)
         except Exception:
             print('Device 0x{:02X} not found'.format(self.addr))
             

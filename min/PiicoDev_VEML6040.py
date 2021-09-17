@@ -30,7 +30,7 @@ class PiicoDev_VEML6040:
 			else:print(compat_str)
 		except:print(compat_str)
 		self.i2c=create_unified_i2c(bus=bus,freq=freq,sda=sda,scl=scl);self.addr=addr
-		try:self.i2c.write8(self.addr,_CONF,_SHUTDOWN);self.i2c.write8(self.addr,_CONF,_DEFAULT_SETTINGS)
+		try:self.i2c.write8(self.addr,_CONF,_SHUTDOWN);self.i2c.write8(self.addr,_CONF,_DEFAULT_SETTINGS);sleep_ms(50)
 		except Exception:print('Device 0x{:02X} not found'.format(self.addr))
 	def classifyHue(self,hues={_A:0,'yellow':60,_B:120,'cyan':180,_C:240,'magenta':300},min_brightness=0):
 		d=self.readHSV()
