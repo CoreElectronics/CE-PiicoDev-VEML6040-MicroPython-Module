@@ -62,12 +62,12 @@ class PiicoDev_VEML6040(object):
             print('Device 0x{:02X} not found'.format(self.addr))
             
     def classifyHue(self, hues={"red":0,"yellow":60,"green":120,"cyan":180,"blue":240,"magenta":300}, min_brightness=0):
-        d=self.readHSV()
-        if d['val'] > min_brightness:
-            key, val = min(hues.items(), key=lambda x: abs(d['hue'] - x[1]))
-            return key
-        else:
-            return 'None'
+    d=self.readHSV()
+    if d > min_brightness:
+        key, val = min(hues.items(), key=lambda x: min(360-abs(d - x[1]),abs(d - x[1]))) # nearest neighbour, but it wraps!
+        return key
+    else:
+        return 'None'
     
     # Read colours from VEML6040
     # Returns raw red, green and blue readings, ambient light [Lux] and colour temperature [K]
