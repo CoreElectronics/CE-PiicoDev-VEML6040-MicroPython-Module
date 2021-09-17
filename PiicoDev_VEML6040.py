@@ -6,7 +6,6 @@
 # Written by Peter Johnston and Michael Ruppe at Core Electronics May 2021
 
 from PiicoDev_Unified import *
-from utime import sleep_ms
 from math import sqrt
 
 # Registers
