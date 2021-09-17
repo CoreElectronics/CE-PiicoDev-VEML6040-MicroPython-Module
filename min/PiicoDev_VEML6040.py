@@ -6,7 +6,6 @@ _C='blue'
 _B='green'
 _A='red'
 from PiicoDev_Unified import *
-from utime import sleep_ms
 from math import sqrt
 _veml6040Address=16
 _CONF=_E
