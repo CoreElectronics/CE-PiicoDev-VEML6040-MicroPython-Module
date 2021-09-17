@@ -63,7 +63,7 @@ class PiicoDev_VEML6040(object):
             print('Device 0x{:02X} not found'.format(self.addr))
             
     def classifyHue(self, hues={"red":0,"yellow":60,"green":120,"cyan":180,"blue":240,"magenta":300}, min_brightness=0):
-        d=self.readHSV()
+        d=self.readHSV()['val']
         if d > min_brightness:
             key, val = min(hues.items(), key=lambda x: min(360-abs(d - x[1]),abs(d - x[1]))) # nearest neighbour, but it wraps!
             return key
