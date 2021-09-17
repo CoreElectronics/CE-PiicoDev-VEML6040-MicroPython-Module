@@ -1,3 +1,4 @@
+_F='val'
 _E=b'\x00'
 _D=None
 _C='blue'
@@ -20,7 +21,7 @@ def rgb2hsv(r,g,b):
 	r=float(r/65535);g=float(g/65535);b=float(b/65535);high=max(r,g,b);low=min(r,g,b);h,s,v=high,high,high;d=high-low;s=0 if high==0 else d/high
 	if high==low:h=0.0
 	else:h={r:(g-b)/d+(6 if g<b else 0),g:(b-r)/d+2,b:(r-g)/d+4}[high];h/=6
-	return{'hue':h*360,'sat':s,'val':v}
+	return{'hue':h*360,'sat':s,_F:v}
 class PiicoDev_VEML6040:
 	def __init__(self,bus=_D,freq=_D,sda=_D,scl=_D,addr=_veml6040Address):
 		try:
@@ -31,7 +32,7 @@ class PiicoDev_VEML6040:
 		try:self.i2c.write8(self.addr,_CONF,_SHUTDOWN);self.i2c.write8(self.addr,_CONF,_DEFAULT_SETTINGS);sleep_ms(50)
 		except Exception:print('Device 0x{:02X} not found'.format(self.addr))
 	def classifyHue(self,hues={_A:0,'yellow':60,_B:120,'cyan':180,_C:240,'magenta':300},min_brightness=0):
-		d=self.readHSV()
+		d=self.readHSV()[_F]
 		if d>min_brightness:key,val=min(hues.items(),key=lambda x:min(360-abs(d-x[1]),abs(d-x[1])));return key
 		else:return'None'
 	def readRGB(self):
