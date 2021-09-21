@@ -52,7 +52,7 @@ bus | int | 0,1 | Raspberry Pi Pico: 0, Raspberry Pi: 1 | I2C Bus.  Ignored on M
 freq | int | 100-1000000 | Device dependent | I2C Bus frequency (Hz).  Ignored on Raspberry Pi
 sda | Pin | Device Dependent | Device Dependent | I2C SDA Pin. Implemented on Raspberry Pi Pico only
 scl | Pin | Device Dependent | Device Dependent | I2C SCL Pin. Implemented on Raspberry Pi Pico only
-addr | int | 0x10, 0x48 | 0x10 | This address cannot be changed
+addr | int | 0x10 | 0x10 | This address cannot be changed
 
 ### `PiicoDev_VEML6040.readRGB()`
 Returns a dictionary with the Red, Green & Blue colour space.
