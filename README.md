@@ -45,7 +45,7 @@ while True:
     sleep_ms(1000)
 ```
 ## Details
-### PiicoDev_VEML6040(bus=, freq=, sda=, scl=, addr=0x10)
+### `PiicoDev_VEML6040(bus=, freq=, sda=, scl=, addr=0x10)`
 Parameter | Type | Range | Default | Description
 --- | --- | --- | --- | ---
 bus | int | 0,1 | Raspberry Pi Pico: 0, Raspberry Pi: 1 | I2C Bus.  Ignored on Micro:bit
@@ -54,7 +54,7 @@ sda | Pin | Device Dependent | Device Dependent | I2C SDA Pin. Implemented on Ra
 scl | Pin | Device Dependent | Device Dependent | I2C SCL Pin. Implemented on Raspberry Pi Pico only
 addr | int | 0x10, 0x48 | 0x10 | This address cannot be changed
 
-### PiicoDev_VEML6040.readRGB()
+### `PiicoDev_VEML6040.readRGB()`
 Returns a dictionary with the Red, Green & Blue colour space.
 
 Parameter | Type | Unit | Description
@@ -65,7 +65,7 @@ blue | float | | Blue reading
 white | float | Lux | Ambient light
 cct | float | K | Colour temperature
 
-### PiicoDev_VEML6040.readHSV()
+### `PiicoDev_VEML6040.readHSV()`
 Returns a dictionary with the Hue Saturation Value colour space.
 
 Parameter | Type | Unit | Description
@@ -74,7 +74,7 @@ red | float |  | Red reading
 green | float | | Green reading
 blue | float | | Blue reading
 
-### PiicoDev_VEML6040.classifyHue(hues={"red":0,"yellow":60,"green":120,"cyan":180,"blue":240,"magenta":300}, min_brightness=0):
+### `PiicoDev_VEML6040.classifyHue(hues={"red":0,"yellow":60,"green":120,"cyan":180,"blue":240,"magenta":300}, min_brightness=0)`
 Returns a classification of the hue.
 
 Parameter | Type | Range | Default | Description
