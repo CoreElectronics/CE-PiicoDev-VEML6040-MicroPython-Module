@@ -11,10 +11,10 @@ from math import sqrt
 # Registers
 _veml6040Address = 0x10
 _CONF = b'\x00'
-_REG_RED = b'\x08'
-_REG_GREEN = b'\x09'
-_REG_BLUE = b'\x0A'
-_REG_WHITE = b'\x0B'
+_REG_RED = 0x08
+_REG_GREEN = 0x09
+_REG_BLUE = 0x0A
+_REG_WHITE = 0x0B
 
 _DEFAULT_SETTINGS = b'\x00' # initialise gain:1x, integration 40ms, Green Sensitivity 0.25168, Max. Detectable Lux 16496
                             # No Trig, Auto mode, enabled.
@@ -74,16 +74,16 @@ class PiicoDev_VEML6040(object):
     # Returns raw red, green and blue readings, ambient light [Lux] and colour temperature [K]
     def readRGB(self):
         try:
-            raw_data = self.i2c.read16(self.addr, _REG_RED)        # returns a bytes object   
+            raw_data = self.i2c.readfrom_mem(self.addr, _REG_RED, 2)        # returns a bytes object   
             u16red = int.from_bytes(raw_data, 'little')
             
-            raw_data = (self.i2c.read16(self.addr, _REG_GREEN))    # returns a bytes object
+            raw_data = (self.i2c.readfrom_mem(self.addr, _REG_GREEN, 2))    # returns a bytes object
             u16grn = int.from_bytes(raw_data, 'little')
             
-            raw_data = (self.i2c.read16(self.addr, _REG_BLUE))     # returns a bytes object
+            raw_data = (self.i2c.readfrom_mem(self.addr, _REG_BLUE, 2))     # returns a bytes object
             u16blu = int.from_bytes(raw_data, 'little')
             
-            raw_data = (self.i2c.read16(self.addr, _REG_WHITE))    # returns a bytes object
+            raw_data = (self.i2c.readfrom_mem(self.addr, _REG_WHITE, 2))    # returns a bytes object
             data_white_int = int.from_bytes(raw_data, 'little')
         except:
             print(i2c_err_str.format(self.addr))
