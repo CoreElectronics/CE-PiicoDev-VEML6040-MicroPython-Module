@@ -8,10 +8,10 @@ from PiicoDev_Unified import *
 from math import sqrt
 _veml6040Address=16
 _CONF=_E
-_REG_RED=b'\x08'
-_REG_GREEN=b'\t'
-_REG_BLUE=b'\n'
-_REG_WHITE=b'\x0b'
+_REG_RED=8
+_REG_GREEN=9
+_REG_BLUE=10
+_REG_WHITE=11
 _DEFAULT_SETTINGS=_E
 _SHUTDOWN=b'\x01'
 _INTEGRATION_TIME=40
@@ -37,7 +37,7 @@ class PiicoDev_VEML6040:
 		else:return'None'
 	def readRGB(self):
 		D='cct';C='als';B='white';A='little'
-		try:raw_data=self.i2c.read16(self.addr,_REG_RED);u16red=int.from_bytes(raw_data,A);raw_data=self.i2c.read16(self.addr,_REG_GREEN);u16grn=int.from_bytes(raw_data,A);raw_data=self.i2c.read16(self.addr,_REG_BLUE);u16blu=int.from_bytes(raw_data,A);raw_data=self.i2c.read16(self.addr,_REG_WHITE);data_white_int=int.from_bytes(raw_data,A)
+		try:raw_data=self.i2c.readfrom_mem(self.addr,_REG_RED,2);u16red=int.from_bytes(raw_data,A);raw_data=self.i2c.readfrom_mem(self.addr,_REG_GREEN,2);u16grn=int.from_bytes(raw_data,A);raw_data=self.i2c.readfrom_mem(self.addr,_REG_BLUE,2);u16blu=int.from_bytes(raw_data,A);raw_data=self.i2c.readfrom_mem(self.addr,_REG_WHITE,2);data_white_int=int.from_bytes(raw_data,A)
 		except:print(i2c_err_str.format(self.addr));return{_A:_NaN,_B:_NaN,_C:_NaN,B:_NaN,C:_NaN,D:_NaN}
 		colour_X=-0.023249*u16red+0.291014*u16grn+-0.36488*u16blu;colour_Y=-0.042799*u16red+0.272148*u16grn+-0.279591*u16blu;colour_Z=-0.155901*u16red+0.251534*u16grn+-0.07624*u16blu;colour_total=colour_X+colour_Y+colour_Z
 		if colour_total==0:return{_A:_NaN,_B:_NaN,_C:_NaN,B:_NaN,C:_NaN,D:_NaN}
