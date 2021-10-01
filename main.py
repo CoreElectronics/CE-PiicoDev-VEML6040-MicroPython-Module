@@ -3,7 +3,7 @@
 # Displays Raw Data, and classifies colours as fruits
 
 from PiicoDev_VEML6040 import PiicoDev_VEML6040
-from PiicoDev_Unified import sleep_ms
+from PiicoDev_Unified import sleep_ms # cross-platform compatible sleep function
 
 fruitList = {
     "apple":0,
