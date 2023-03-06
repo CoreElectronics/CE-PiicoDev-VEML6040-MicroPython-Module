@@ -70,9 +70,9 @@ Returns a dictionary with the Hue Saturation Value colour space.
 
 Parameter | Type | Unit | Description
 --- | --- | --- | ---
-red | float |  | Red reading
-green | float | | Green reading
-blue | float | | Blue reading
+hue | float |  | Hue reading
+sat | float | | Saturation reading
+val | float | | Value reading
 
 ### `PiicoDev_VEML6040.classifyHue(hues={"red":0,"yellow":60,"green":120,"cyan":180,"blue":240,"magenta":300}, min_brightness=0)`
 Returns a classification of the hue.
